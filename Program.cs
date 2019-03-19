@@ -1,8 +1,8 @@
 ﻿using CommandLine;
+using POC.DbSwitcher.CRUD;
 using POC.DbSwitcher.Migrations;
 using System;
 using System.Collections.Generic;
-using POC.DbSwitcher.CRUD;
 
 namespace POC.DbSwitcher
 {
@@ -38,14 +38,21 @@ namespace POC.DbSwitcher
 
                     Console.WriteLine("Migration complete.");
 
-                    Console.WriteLine("Starting CRUD tests...");
+                    Console.WriteLine("------------------------------------------------------");
+                    Console.WriteLine("Starting CRUD tests with Entity Framework...");
 
-                    new CrudTester(options.DatabaseType, options.ConnectionString)
-                        .RunTests();
+                    var tester = new CrudTester(options.DatabaseType, options.ConnectionString);
+                    tester.RunEntityFrameworkTests();
+
+
+                    Console.WriteLine("------------------------------------------------------");
+                    Console.WriteLine("Starting CRUD tests with NHibernate...");
+
+                    tester.RunNHibernateTests();
 
                     Exit(0);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.Error.WriteLine(ex.Message);
                     Exit(-2);

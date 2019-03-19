@@ -1,1 +1,0 @@
-﻿ALTER TABLE edfi."DbSwitcher" ADD "IsTrue2" BOOL NOT NULL DEFAULT ((false));

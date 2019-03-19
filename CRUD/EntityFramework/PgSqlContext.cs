@@ -12,18 +12,5 @@ namespace POC.DbSwitcher.CRUD.EntityFramework
         {
             optionsBuilder.UseNpgsql(ConnectionString);
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-
-            // Map Postgres smallint to .NET boolean
-            modelBuilder.Entity<Models.DbSwitcher>()
-                .Property(t => t.IsTrue)
-                .HasConversion(
-                    v => v ? 1 : 0,
-                    v => v == 1
-                );
-
-        }
     }
 }

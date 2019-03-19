@@ -5,25 +5,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace POC.DbSwitcher.CRUD.Models
 {
     [Table("DbSwitcher", Schema = "edfi")]
-    public class DbSwitcher
+    public class DbSwitcher  : IHaveIdProperty
     {
         [Key]
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
         [MaxLength(50)]
-        public string Summary { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public virtual string Summary { get; set; }
 
-        public Guid UniqueId { get; set; }
+        public virtual DateTime CreatedDate { get; set; }
 
-        public bool IsTrue { get; set; }
+        public virtual Guid UniqueId { get; set; }
 
-        public bool IsTrue2 { get; set; }
+        public virtual bool IsTrue { get; set; }
 
 
         public override string ToString()
         {
-            return $"Summary: {Summary}, CreatedDate: {CreatedDate}, UniqueId: {UniqueId}, IsTrue: {IsTrue}, IsTrue2: {IsTrue2}";
+            return $"Summary: {Summary}, CreatedDate: {CreatedDate}, UniqueId: {UniqueId}, IsTrue: {IsTrue}";
         }
 
     }

@@ -9,6 +9,6 @@ CREATE TABLE edfi."DbSwitcher" (
 	"Summary" VARCHAR(50),
 	"CreatedDate" TIMESTAMP NOT NULL,
 	"UniqueId" UUID NOT NULL,
-	"IsTrue" SMALLINT NOT NULL DEFAULT ((0)),
+	"IsTrue" BOOL NOT NULL DEFAULT ((false)),
 	CONSTRAINT PK_DbSwitcher PRIMARY KEY ("Id")
 );

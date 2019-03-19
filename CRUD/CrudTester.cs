@@ -1,6 +1,7 @@
 ﻿using POC.DbSwitcher.CRUD.EntityFramework;
 using System;
 using System.Linq;
+using POC.DbSwitcher.CRUD.NHibernate;
 
 namespace POC.DbSwitcher.CRUD
 {
@@ -8,6 +9,7 @@ namespace POC.DbSwitcher.CRUD
     {
 
         private readonly PocDbSwitcherContext _dbContext;
+        private readonly PocDbSwitcherRepository<Models.DbSwitcher> _nhibernateRepository;
 
         public CrudTester(DatabaseType databaseType, string connectionString)
         {
@@ -22,10 +24,11 @@ namespace POC.DbSwitcher.CRUD
                 default:
                     throw new InvalidOperationException($"Database type {databaseType} is not supported.");
             }
-            
+
+            _nhibernateRepository = new PocDbSwitcherRepository<Models.DbSwitcher>(databaseType, connectionString);
         }
 
-        public void RunTests()
+        public void RunEntityFrameworkTests()
         {
             DisplayAllValues();
             var entry = CreateNewEntry();
@@ -65,7 +68,6 @@ namespace POC.DbSwitcher.CRUD
                 Console.WriteLine("UpdateEntry...");
 
                 entity.IsTrue = false;
-                entity.IsTrue2 = true;
                 _dbContext.SaveChanges();
             }
 
@@ -75,6 +77,56 @@ namespace POC.DbSwitcher.CRUD
 
                 _dbContext.Remove(entity);
                 _dbContext.SaveChanges();
+            }
+        }
+
+        public void RunNHibernateTests()
+        {
+            DisplayAllValues();
+            var entry = CreateNewEntry();
+            DisplayAllValues();
+            UpdateEntry(entry);
+            DisplayAllValues();
+            DeleteEntry(entry);
+            DisplayAllValues();
+
+            void DisplayAllValues()
+            {
+                foreach (var dbSwitcher in _nhibernateRepository.FindAll())
+                {
+                    Console.WriteLine(dbSwitcher.ToString());
+                }
+            }
+
+            Models.DbSwitcher CreateNewEntry()
+            {
+                Console.WriteLine("CreateNewEntry...");
+
+                var item = _nhibernateRepository.Create(new Models.DbSwitcher
+                {
+                    CreatedDate = DateTime.Now,
+                    IsTrue = true,
+                    Summary = "New Entry",
+                    UniqueId = Guid.NewGuid()
+                });
+
+                return item;
+            }
+
+            void UpdateEntry(Models.DbSwitcher entity)
+            {
+                Console.WriteLine("UpdateEntry...");
+
+                entity.IsTrue = false;
+                entity.IsTrue = true;
+                _nhibernateRepository.Update(entity);
+            }
+
+            void DeleteEntry(Models.DbSwitcher entity)
+            {
+                Console.WriteLine("DeleteEntry...");
+
+                _nhibernateRepository.Delete(entity);
             }
         }
     }

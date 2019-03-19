@@ -1,7 +1,7 @@
 ﻿with src as (
 	select * 
-	from  (values ('One', '2019-03-18 9:56:01', '27E95CA5-E27F-470E-A4E6-0FE5819D2781', 0),
-			('Two', '2019-03-18 9:56:02', '37E95CA5-E27F-470E-A4E6-0FE5819D2782', 1)
+	from  (values ('One', '2019-03-18 9:56:01', '27E95CA5-E27F-470E-A4E6-0FE5819D2781', false),
+			('Two', '2019-03-18 9:56:02', '37E95CA5-E27F-470E-A4E6-0FE5819D2782', true)
 	) as v ("Summary", "CreatedDate", "UniqueId", "IsTrue")
 ), upd as (
 	update edfi."DbSwitcher"

@@ -13,7 +13,6 @@
     <None Remove="Database\Structure\MSSQL\0002-Alter-Table-DbSwitcher_Add-IsTrue2.sql" />
     <None Remove="Database\Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
     <None Remove="Database\Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
-    <None Remove="Database\Structure\PGSQL\0002-Alter-Table-DbSwitcher_Add-IsTrue2.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,7 +23,6 @@
     <EmbeddedResource Include="Database\Structure\MSSQL\0001-Create-Table-DbSwitcher.sql" />
     <EmbeddedResource Include="Database\Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
     <EmbeddedResource Include="Database\Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
-    <EmbeddedResource Include="Database\Structure\PGSQL\0002-Alter-Table-DbSwitcher_Add-IsTrue2.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +31,7 @@
     <PackageReference Include="DbUp-PostgreSql" Version="4.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.3" />
+    <PackageReference Include="nhibernate" Version="5.2.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
   </ItemGroup>
 
