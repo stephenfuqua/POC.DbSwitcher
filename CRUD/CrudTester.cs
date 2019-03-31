@@ -1,7 +1,8 @@
 ﻿using POC.DbSwitcher.CRUD.EntityFramework;
+using POC.DbSwitcher.CRUD.NHibernate;
 using System;
 using System.Linq;
-using POC.DbSwitcher.CRUD.NHibernate;
+using System.Transactions;
 
 namespace POC.DbSwitcher.CRUD
 {
@@ -9,7 +10,7 @@ namespace POC.DbSwitcher.CRUD
     {
 
         private readonly PocDbSwitcherContext _dbContext;
-        private readonly PocDbSwitcherRepository<Models.DbSwitcher> _nhibernateRepository;
+        private readonly PocDbSwitcherRepository _nhibernateRepository;
 
         public CrudTester(DatabaseType databaseType, string connectionString)
         {
@@ -25,7 +26,7 @@ namespace POC.DbSwitcher.CRUD
                     throw new InvalidOperationException($"Database type {databaseType} is not supported.");
             }
 
-            _nhibernateRepository = new PocDbSwitcherRepository<Models.DbSwitcher>(databaseType, connectionString);
+            _nhibernateRepository = new PocDbSwitcherRepository(databaseType, connectionString);
         }
 
         public void RunEntityFrameworkTests()
@@ -37,6 +38,138 @@ namespace POC.DbSwitcher.CRUD
             DisplayAllValues();
             DeleteEntry(entry);
             DisplayAllValues();
+            AttemptToEnterDuplicateKey();
+            MissingForeignKey();
+            DeleteForeignKeyReference();
+            UpdateFailsDueToMissingForeignKey();
+
+            void DeleteForeignKeyReference()
+            {
+                Console.WriteLine("Attempt to delete parent record in foreign key relationship...");
+
+                try
+                {
+                    using (var _ = new TransactionScope())
+                    {
+                        var parent = new Models.DbSwitcher
+                        {
+                            CreatedDate = DateTime.Now,
+                            IsTrue = true,
+                            Summary = "First",
+                            UniqueId = Guid.NewGuid()
+                        };
+                        _dbContext.DbSwitchers.Add(parent);
+                        _dbContext.SaveChanges();
+
+                        var child = new Models.DependentTable
+                        {
+                            CreatedDate = DateTime.Now,
+                            DbSwitcherId = parent.Id
+                        };
+
+                        _dbContext.DependentTables.Add(child);
+                        _dbContext.SaveChanges();
+
+                        _dbContext.Remove(parent);
+                        _dbContext.SaveChanges();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void MissingForeignKey()
+            {
+                Console.WriteLine("Attempt to create dependent record when foreign key reference does not exist...");
+                try
+                {
+                    var child = new Models.DependentTable
+                    {
+                        CreatedDate = DateTime.Now,
+                        DbSwitcherId = 1234567
+                    };
+                    _dbContext.DependentTables.Add(child);
+                    _dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void UpdateFailsDueToMissingForeignKey()
+            {
+                Console.WriteLine("Attempt to change a foreign key to reference record that does not exist...");
+
+                try
+                {
+                    using (var _ = new TransactionScope())
+                    {
+                        var parent = new Models.DbSwitcher
+                        {
+                            CreatedDate = DateTime.Now,
+                            IsTrue = true,
+                            Summary = "First",
+                            UniqueId = Guid.NewGuid()
+                        };
+                        _dbContext.DbSwitchers.Add(parent);
+                        _dbContext.SaveChanges();
+
+                        var child = new Models.DependentTable
+                        {
+                            CreatedDate = DateTime.Now,
+                            DbSwitcherId = parent.Id
+                        };
+
+                        _dbContext.DependentTables.Add(child);
+                        _dbContext.SaveChanges();
+
+                        child.DbSwitcherId = 123124634;
+                        _dbContext.SaveChanges();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void AttemptToEnterDuplicateKey()
+            {
+                Console.WriteLine("Attempting Duplicate Key Test...");
+
+                var first = new Models.DbSwitcher
+                {
+                    CreatedDate = DateTime.Now,
+                    IsTrue = true,
+                    Summary = "First",
+                    UniqueId = Guid.NewGuid()
+                };
+                _dbContext.DbSwitchers.Add(first);
+
+                var second = new Models.DbSwitcher
+                {
+                    CreatedDate = DateTime.Now,
+                    IsTrue = true,
+                    Summary = "Second",
+                    UniqueId = first.UniqueId
+                };
+                _dbContext.DbSwitchers.Add(second);
+
+                try
+                {
+                    using (var _ = new TransactionScope())
+                    {
+                        _dbContext.SaveChanges();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
 
             void DisplayAllValues()
             {
@@ -79,6 +212,17 @@ namespace POC.DbSwitcher.CRUD
                 _dbContext.SaveChanges();
             }
         }
+        private void WriteExceptionMessage(Exception ex)
+        {
+            Console.Error.WriteLine($"Exception type is {ex.GetType()}");
+            Console.Error.WriteLine(ex.Message);
+
+            if (ex.InnerException != null)
+            {
+                Console.Error.WriteLine("---- Inner exception ----");
+                WriteExceptionMessage(ex.InnerException);
+            }
+        }
 
         public void RunNHibernateTests()
         {
@@ -89,10 +233,141 @@ namespace POC.DbSwitcher.CRUD
             DisplayAllValues();
             DeleteEntry(entry);
             DisplayAllValues();
+            AttemptToEnterDuplicateKey();
+            MissingForeignKey();
+            DeleteForeignKeyReference();
+            UpdateFailsDueToMissingForeignKey();
 
+            void DeleteForeignKeyReference()
+            {
+                Console.WriteLine("Attempt to delete parent record in foreign key relationship...");
+
+                try
+                {
+                    _nhibernateRepository.RunMultipeStepsInsideTransaction((session, transaction) =>
+                    {
+                        var parent = new Models.DbSwitcher
+                        {
+                            CreatedDate = DateTime.Now,
+                            IsTrue = true,
+                            Summary = "First",
+                            UniqueId = Guid.NewGuid()
+                        };
+
+                        parent.Id = (int)session.Save(parent);
+                        session.Flush();
+
+                        var child = new Models.DependentTable
+                        {
+                            CreatedDate = DateTime.Now,
+                            DbSwitcherId = parent.Id
+                        };
+                        child.Id = (int)session.Save(child);
+                        session.Flush();
+
+                        session.Delete(parent);
+                        session.Flush();
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void MissingForeignKey()
+            {
+                Console.WriteLine("Attempt to create dependent record when foreign key reference does not exist...");
+                try
+                {
+                    var child = new Models.DependentTable
+                    {
+                        CreatedDate = DateTime.Now,
+                        DbSwitcherId = 1234567
+                    };
+                    _nhibernateRepository.Create(child);
+
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void UpdateFailsDueToMissingForeignKey()
+            {
+                Console.WriteLine("Attempt to change a foreign key to reference record that does not exist...");
+
+                try
+                {
+
+                    _nhibernateRepository.RunMultipeStepsInsideTransaction((session, transaction) =>
+                    {
+                        var parent = new Models.DbSwitcher
+                        {
+                            CreatedDate = DateTime.Now,
+                            IsTrue = true,
+                            Summary = "First",
+                            UniqueId = Guid.NewGuid()
+                        };
+
+                        parent.Id = (int)session.Save(parent);
+                        session.Flush();
+
+                        var child = new Models.DependentTable
+                        {
+                            CreatedDate = DateTime.Now,
+                            DbSwitcherId = parent.Id
+                        };
+                        child.Id = (int)session.Save(child);
+                        session.Flush();
+
+                        child.DbSwitcherId = 123234235;
+                        session.Update(child);
+                        session.Flush();
+                    });
+
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
+
+            void AttemptToEnterDuplicateKey()
+            {
+                Console.WriteLine("Attempting Duplicate Key Test...");
+
+                var first = new Models.DbSwitcher
+                {
+                    CreatedDate = DateTime.Now,
+                    IsTrue = true,
+                    Summary = "First",
+                    UniqueId = Guid.NewGuid()
+                };
+
+                var second = new Models.DbSwitcher
+                {
+                    CreatedDate = DateTime.Now,
+                    IsTrue = true,
+                    Summary = "Second",
+                    UniqueId = first.UniqueId
+                };
+                _dbContext.DbSwitchers.Add(second);
+
+                try
+                {
+                    _nhibernateRepository.Create<Models.DbSwitcher>(new Models.DbSwitcher[] { first, second });
+                }
+                catch (Exception ex)
+                {
+                    WriteExceptionMessage(ex);
+                }
+            }
             void DisplayAllValues()
             {
-                foreach (var dbSwitcher in _nhibernateRepository.FindAll())
+                foreach (var dbSwitcher in _nhibernateRepository.FindAll<Models.DbSwitcher>())
                 {
                     Console.WriteLine(dbSwitcher.ToString());
                 }

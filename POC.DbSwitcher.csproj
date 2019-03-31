@@ -10,19 +10,25 @@
     <None Remove="Database\Data\PGSQL\0000-Initialize-DbSwitcher.sql" />
     <None Remove="Database\Structure\MSSQL\0000-Create-Schema-Edfi.sql" />
     <None Remove="Database\Structure\MSSQL\0001-Create-Table-DbSwitcher.sql" />
-    <None Remove="Database\Structure\MSSQL\0002-Alter-Table-DbSwitcher_Add-IsTrue2.sql" />
+    <None Remove="Database\Structure\MSSQL\0002-Create-Table-DependentTable.sql" />
+    <None Remove="Database\Structure\MSSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
     <None Remove="Database\Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
     <None Remove="Database\Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
+    <None Remove="Database\Structure\PGSQL\0002-Create-Table-DependentTable.sql" />
+    <None Remove="Database\Structure\PGSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Database\Data\MSSQL\0000-Initialize-DbSwitcher.sql" />
     <EmbeddedResource Include="Database\Data\PGSQL\0000-Initialize-DbSwitcher.sql" />
     <EmbeddedResource Include="Database\Structure\MSSQL\0000-Create-Schema-Edfi.sql" />
-    <EmbeddedResource Include="Database\Structure\MSSQL\0002-Alter-Table-DbSwitcher_Add-IsTrue2.sql" />
+    <EmbeddedResource Include="Database\Structure\MSSQL\0002-Create-Table-DependentTable.sql" />
+    <EmbeddedResource Include="Database\Structure\MSSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
     <EmbeddedResource Include="Database\Structure\MSSQL\0001-Create-Table-DbSwitcher.sql" />
     <EmbeddedResource Include="Database\Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
     <EmbeddedResource Include="Database\Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
+    <EmbeddedResource Include="Database\Structure\PGSQL\0002-Create-Table-DependentTable.sql" />
+    <EmbeddedResource Include="Database\Structure\PGSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
   </ItemGroup>
 
   <ItemGroup>
