@@ -15,7 +15,7 @@ namespace POC.DbSwitcher
     {
         private const string SampleConnectionString = "Server=yourServer;Initial Catalog=yourODSdbName;Integrated Security=SSPI";
 
-        [Option('d', "databaseType", Required = true, HelpText ="Database type")]
+        [Option('p', "provider", Required = true, HelpText ="Database provider type")]
         public DatabaseType DatabaseType { get; set; }
 
         [Option('t', "timeOut", Default = 60, HelpText = "Connection timeout in seconds")]
@@ -25,7 +25,7 @@ namespace POC.DbSwitcher
         public string ConnectionString { get; set; }
 
 
-        [Option("journalTable", Default = "PocJournal", HelpText = "Table name for journaling table")]
+        [Option('j', "journalTable", Default = "PocJournal", HelpText = "Table name for journaling table")]
         public string JournalTable { get; set; }
 
         [Usage(ApplicationAlias = "POC.DbSwitcher")]

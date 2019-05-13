@@ -14,3 +14,8 @@ being created with quotations - thus forcing that they always be addressed with
 quotations.
 
 No attempt has been made to optimize the ORMs in this proof-of-concept experiment.
+
+Sample connection strings:
+
+* SQL Server: `server=localhost;Database=poc-dbswitcher;Username=yourUser;Password=yourPassword`
+* PostgreSQL: `Host=localhost;Database=poc-dbswitcher;Username=yourUser;Password=yourPassword`

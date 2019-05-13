@@ -8,8 +8,7 @@ using NHibernate.Cfg.MappingSchema;
 using NHibernate.Driver;
 using NHibernate.Dialect;
 using NHibernate.Mapping.ByCode;
-using POC.DbSwitcher.CRUD.Models;
-
+using POC.DbSwitcher.Models;
 
 namespace POC.DbSwitcher.CRUD.NHibernate
 {
@@ -49,7 +48,7 @@ namespace POC.DbSwitcher.CRUD.NHibernate
         }
 
         public IEnumerable<T> FindAll<T>()
-            where T: class, IHaveIdProperty
+            where T : class, IHaveIdProperty
         {
             using (var session = _sessionFactory.OpenSession())
             {
@@ -68,7 +67,7 @@ namespace POC.DbSwitcher.CRUD.NHibernate
         }
 
         public T Create<T>(T entity)
-        where T: class, IHaveIdProperty
+        where T : class, IHaveIdProperty
         {
             using (var session = _sessionFactory.OpenSession())
             using (var transaction = session.BeginTransaction())
@@ -122,7 +121,7 @@ namespace POC.DbSwitcher.CRUD.NHibernate
         {
             var mapper = new ModelMapper();
             mapper.AddMappings(new List<Type> { typeof(DbSwitcherMap), typeof(DependentTableMap) });
-            
+
             return mapper.CompileMappingForAllExplicitlyAddedEntities();
         }
     }

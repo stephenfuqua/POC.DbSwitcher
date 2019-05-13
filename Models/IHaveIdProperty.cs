@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace POC.DbSwitcher.CRUD.Models
+namespace POC.DbSwitcher.Models
 {
     public interface IHaveIdProperty
     {

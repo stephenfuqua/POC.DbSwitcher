@@ -7,8 +7,8 @@ namespace POC.DbSwitcher.CRUD.NHibernate
     {
         public DependentTableMap()
         {
-            Schema("edfi");
-            Table("DependentTable");
+            Schema(Models.DependentTable.Constants.SchemaName);
+            Table(Models.DependentTable.Constants.TableName);
             Id(x => x.Id, m => m.Generator(Generators.Native));
             Property(x => x.CreatedDate);
             Property(x => x.DbSwitcherId);
