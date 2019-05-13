@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\POC.DbSwitcher.Database1\POC.DbSwitcher.Database1.csproj" />
+    <ProjectReference Include="..\POC.DbSwitcher.Database2\POC.DbSwitcher.Database2.csproj" />
   </ItemGroup>
 
 </Project>

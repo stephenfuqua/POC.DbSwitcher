@@ -1,4 +1,4 @@
-﻿namespace POC.DbSwitcher.Database1
+﻿namespace POC.DbSwitcher.Database2
 {
     public class Marker
     {

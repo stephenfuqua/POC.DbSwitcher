@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.DbSwitcher.Console", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.DbSwitcher.Database1", "POC.DbSwitcher.Database1\POC.DbSwitcher.Database1.csproj", "{8213AC26-6B26-427B-95CD-0F53BBB2D536}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.DbSwitcher.Database2", "POC.DbSwitcher.Database2\POC.DbSwitcher.Database2.csproj", "{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8213AC26-6B26-427B-95CD-0F53BBB2D536}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8213AC26-6B26-427B-95CD-0F53BBB2D536}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8213AC26-6B26-427B-95CD-0F53BBB2D536}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
