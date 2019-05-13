@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Data\MSSQL\0000-Initialize-DbSwitcher.sql" />
+    <None Remove="Data\PGSQL\0000-Initialize-DbSwitcher.sql" />
+    <None Remove="Structure\MSSQL\0000-Create-Schema-Edfi.sql" />
+    <None Remove="Structure\MSSQL\0001-Create-Table-DbSwitcher.sql" />
+    <None Remove="Structure\MSSQL\0002-Create-Table-DependentTable.sql" />
+    <None Remove="Structure\MSSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
+    <None Remove="Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
+    <None Remove="Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
+    <None Remove="Structure\PGSQL\0002-Create-Table-DependentTable.sql" />
+    <None Remove="Structure\PGSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\MSSQL\0000-Initialize-DbSwitcher.sql" />
+    <EmbeddedResource Include="Data\PGSQL\0000-Initialize-DbSwitcher.sql" />
+    <EmbeddedResource Include="Structure\MSSQL\0000-Create-Schema-Edfi.sql" />
+    <EmbeddedResource Include="Structure\MSSQL\0001-Create-Table-DbSwitcher.sql" />
+    <EmbeddedResource Include="Structure\MSSQL\0002-Create-Table-DependentTable.sql" />
+    <EmbeddedResource Include="Structure\MSSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
+    <EmbeddedResource Include="Structure\PGSQL\0000-Create-Schema-Edfi.sql" />
+    <EmbeddedResource Include="Structure\PGSQL\0001-Create-Table-DbSwitcher.sql" />
+    <EmbeddedResource Include="Structure\PGSQL\0002-Create-Table-DependentTable.sql" />
+    <EmbeddedResource Include="Structure\PGSQL\0003-Alter-Table-DbSwitcher_Add-AlternateKey.sql" />
+  </ItemGroup>
+
+</Project>
