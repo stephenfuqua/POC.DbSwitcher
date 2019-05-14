@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.DbSwitcher.Database1", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.DbSwitcher.Database2", "POC.DbSwitcher.Database2\POC.DbSwitcher.Database2.csproj", "{ED52F6C8-4F15-4DB6-9640-32A6282CD5D8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extra", "Extra", "{8004374C-332E-437B-B366-B046BDBDCD1B}"
+	ProjectSection(SolutionItems) = preProject
+		Extra\1001-Create-Function-Split.sql = Extra\1001-Create-Function-Split.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -33,7 +33,6 @@ namespace POC.DbSwitcher.Console
 
                 try
                 {
-
                     Logger.WriteSectionHeader("Database Migration using DbUp");
                     new MigrationProvider(connectionFactory.MigrationStrategy)
                         .Migrate(options.BuildMigrationConfig());
@@ -56,7 +55,6 @@ namespace POC.DbSwitcher.Console
                     Logger.ErrorLine(ex.Message);
                     Exit(-2);
                 }
-
             }
 
             void WriteArgumentErrorMessage(IEnumerable<Error> errors)

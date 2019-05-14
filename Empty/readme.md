@@ -1,0 +1,1 @@
+Directory with no scripts, to test what happens when DbUp is pointed to this directory.

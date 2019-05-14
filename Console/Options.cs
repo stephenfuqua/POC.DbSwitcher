@@ -24,9 +24,11 @@ namespace POC.DbSwitcher
         [Option('c', "connectionString", Required = true, HelpText = "Connection string")]
         public string ConnectionString { get; set; }
 
-
         [Option('j', "journalTable", Default = "PocJournal", HelpText = "Table name for journaling table")]
         public string JournalTable { get; set; }
+
+        [Option('x', "extraScriptPaths", HelpText = "Space-separated list of paths to search for additional scripts to deploy")]
+        public IEnumerable<string> ExtraScriptPaths { get; set; }
 
         [Usage(ApplicationAlias = "POC.DbSwitcher")]
         public static IEnumerable<Example> Examples
@@ -43,7 +45,8 @@ namespace POC.DbSwitcher
                     ConnectionString = SampleConnectionString,
                     DatabaseType = DatabaseType.SqlServer,
                     TimeoutInSeconds = 360,
-                    JournalTable = "PocJournal"
+                    JournalTable = "PocJournal",
+                    ExtraScriptPaths = new[] { "c:\\path\\one", "c:\\path\\two" }
                 });
             }
         }
@@ -54,7 +57,8 @@ namespace POC.DbSwitcher
             {
                 ConnectionString = ConnectionString,
                 JournalingTable = JournalTable,
-                Timeout = TimeoutInSeconds
+                Timeout = TimeoutInSeconds,
+                ExtraScriptPaths = ExtraScriptPaths
             };
         }
     }

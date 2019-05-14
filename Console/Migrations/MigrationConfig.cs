@@ -1,4 +1,6 @@
-﻿namespace POC.DbSwitcher.Console.Migrations
+﻿using System.Collections.Generic;
+
+namespace POC.DbSwitcher.Console.Migrations
 {
     public class MigrationConfig
     {
@@ -7,5 +9,7 @@
         public string JournalingTable { get; set; }
 
         public int Timeout { get; set; }
+
+        public IEnumerable<string> ExtraScriptPaths { get; set; }
     }
 }
