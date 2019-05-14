@@ -12,21 +12,10 @@ namespace POC.DbSwitcher.Console.CRUD
         private readonly PocDbSwitcherContext _dbContext;
         private readonly PocDbSwitcherRepository _nhibernateRepository;
 
-        public CrudTester(DatabaseType databaseType, string connectionString)
+        public CrudTester(PocDbSwitcherContext dbContext, PocDbSwitcherRepository nhibernateRepository)
         {
-            switch (databaseType)
-            {
-                case DatabaseType.Postgres:
-                    _dbContext = new PgSqlContext(connectionString);
-                    break;
-                case DatabaseType.SqlServer:
-                    _dbContext = new MsSqlContext(connectionString);
-                    break;
-                default:
-                    throw new InvalidOperationException($"Database type {databaseType} is not supported.");
-            }
-
-            _nhibernateRepository = new PocDbSwitcherRepository(databaseType, connectionString);
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _nhibernateRepository = nhibernateRepository ?? throw new ArgumentNullException(nameof(nhibernateRepository));
         }
 
         public void RunEntityFrameworkTests()

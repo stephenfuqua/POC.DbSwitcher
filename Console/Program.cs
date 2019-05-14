@@ -9,29 +9,8 @@ namespace POC.DbSwitcher.Console
 {
     class Program
     {
-        public interface IDatabaseStrategy
-        {
-            IMigrationStrategy MigrationStrategy { get; }
-            IDatabaseConnectionManager CreateConnectionManager(string connectionString);
-        }
-
-        public class SqlServerStrategy : IDatabaseStrategy
-        {
-            public IMigrationStrategy MigrationStrategy { get; } = new MsSqlMigrationStrategy();
-
-            public IDatabaseConnectionManager CreateConnectionManager(string connectionString) => DatabaseConnectionManager.CreateForSqlServer(connectionString);
-        }
-
-        public class PostgreSQLStrategy : IDatabaseStrategy
-        {
-            public IMigrationStrategy MigrationStrategy { get; } = new PgSqlMigrationStrategy();
-
-            public IDatabaseConnectionManager CreateConnectionManager(string connectionString) => DatabaseConnectionManager.CreateForPostgreSQL(connectionString);
-        }
-
         static void Main(string[] args)
         {
-
             new Parser(config =>
             {
                 config.CaseInsensitiveEnumValues = true;
@@ -44,22 +23,22 @@ namespace POC.DbSwitcher.Console
 
             void RunWithOptions(Options options)
             {
-                var switcher = new Dictionary<DatabaseType, IDatabaseStrategy>
+                var switcher = new Dictionary<DatabaseType, IConnectionFactory>
                 {
-                    { DatabaseType.Postgres, new PostgreSQLStrategy() },
-                    { DatabaseType.SqlServer, new SqlServerStrategy() }
+                    { DatabaseType.Postgres, new PostgreSqlConnectionFactory(options.ConnectionString) },
+                    { DatabaseType.SqlServer, new SqlServerConnectionFactory(options.ConnectionString) }
                 };
 
-                var strategy = switcher[options.DatabaseType];
+                var connectionFactory = switcher[options.DatabaseType];
 
                 try
                 {
 
                     Logger.WriteSectionHeader("Database Migration using DbUp");
-                    new MigrationProvider(strategy.MigrationStrategy)
+                    new MigrationProvider(connectionFactory.MigrationStrategy)
                         .Migrate(options.BuildMigrationConfig());
 
-                    var tester = new CrudTester(options.DatabaseType, options.ConnectionString);
+                    var tester = new CrudTester(connectionFactory.CreateEntityFrameworkContext(), connectionFactory.CreateNHibernateRepository());
 
                     Logger.WriteSectionHeader("Entity Framework CRUD Tests");
                     tester.RunEntityFrameworkTests();
@@ -68,7 +47,7 @@ namespace POC.DbSwitcher.Console
                     tester.RunNHibernateTests();
 
                     Logger.WriteSectionHeader("ADO.NET vs Dapper");
-                    new QueryTester(strategy.CreateConnectionManager(options.ConnectionString)).Run();
+                    new QueryTester(connectionFactory.CreateConnectionManager()).Run();
 
                     Exit(0);
                 }

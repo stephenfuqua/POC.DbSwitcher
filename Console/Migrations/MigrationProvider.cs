@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DbUp;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using DbUp;
 
 namespace POC.DbSwitcher.Console.Migrations
 {
@@ -25,7 +25,7 @@ namespace POC.DbSwitcher.Console.Migrations
             assemblies.ForEach(x =>
             {
                 DeployScripts(x, "Structure");
-                DeployScripts(x,"Data");
+                DeployScripts(x, "Data");
             });
 
             void DeployScripts(Assembly assembly, string queryType)
@@ -33,6 +33,7 @@ namespace POC.DbSwitcher.Console.Migrations
                 var result = _migrationStrategy
                     .DeployTo(DeployChanges.To, config)
                     .WithScriptsEmbeddedInAssembly(assembly, filter => filter.Contains($"{queryType}.{_migrationStrategy.DatabaseSpecificFolderName}."))
+                    // It might be feasible to instead use WithScriptsEmbeddedInAssemblies; didn't test it out.
                     .WithExecutionTimeout(TimeSpan.FromSeconds(config.Timeout))
                     .WithTransaction()
                     .LogToConsole()

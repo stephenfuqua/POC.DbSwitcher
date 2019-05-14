@@ -4,6 +4,12 @@ using System.Data.Common;
 
 namespace POC.DbSwitcher.Console.Query
 {
+    /*
+     * This class is distinct from the ConnectionFactory because it is generalizable / useful outside of this application,
+     * and it is specific to one function: providing an open database connection utilizing DbProviderFactory. The other
+     * class is a general factory for this application, replacing a DI container.
+     */
+
     public class DatabaseConnectionManager : IDatabaseConnectionManager
     {
         private readonly string _connectionStringSetting;
@@ -32,6 +38,11 @@ namespace POC.DbSwitcher.Console.Query
             return connection;
         }
 
+        /*
+         * In a .NET Framework application with an app.config or web.config file, the provider factories would be setup in the
+         * config file and the connection strings would have providerName properties on them. .NET Core does not appear to have 
+         * support for switching providers solely through config file, although my search was not as exhaustive as it could be.
+         */
         public static DatabaseConnectionManager CreateForPostgreSQL(string connectionString)
         {
             return new DatabaseConnectionManager(DatabaseType.Postgres, Npgsql.NpgsqlFactory.Instance, connectionString);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
+using NHibernate.Cfg.Loquacious;
 using NHibernate.Cfg.MappingSchema;
 using NHibernate.Driver;
 using NHibernate.Dialect;
@@ -16,30 +17,13 @@ namespace POC.DbSwitcher.Console.CRUD.NHibernate
     {
         private readonly ISessionFactory _sessionFactory;
 
-        public PocDbSwitcherRepository(DatabaseType databaseType, string connectionString)
+        private PocDbSwitcherRepository(string connectionString, Action<Configuration, IDbIntegrationConfigurationProperties> configure)
         {
             var cfg = new Configuration();
             cfg.DataBaseIntegration(x =>
             {
                 x.ConnectionString = connectionString;
-
-                // There is undoubtedly a better way to handle this. But it is 
-                // good enough for the POC
-                switch (databaseType)
-                {
-                    case DatabaseType.Postgres:
-                        x.Driver<NpgsqlDriver>();
-                        x.Dialect<PostgreSQL83Dialect>();
-                        cfg.SetNamingStrategy(new QuotedNamingStrategy());
-                        x.LogSqlInConsole = true;
-                        break;
-                    case DatabaseType.SqlServer:
-                        x.Driver<SqlClientDriver>();
-                        x.Dialect<MsSql2012Dialect>();
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Database type {databaseType} not supported.");
-                }
+                configure(cfg, x);
             });
             cfg.AddAssembly(Assembly.GetExecutingAssembly());
             cfg.AddDeserializedMapping(CreateMapping(), null);
@@ -123,6 +107,27 @@ namespace POC.DbSwitcher.Console.CRUD.NHibernate
             mapper.AddMappings(new List<Type> { typeof(DbSwitcherMap), typeof(DependentTableMap) });
 
             return mapper.CompileMappingForAllExplicitlyAddedEntities();
+        }
+
+        public static PocDbSwitcherRepository CreateForPostgreSQL(string connectionString)
+        {
+            return new PocDbSwitcherRepository(connectionString, (cfg, props) =>
+            {
+                props.Driver<NpgsqlDriver>();
+                props.Dialect<PostgreSQL83Dialect>();
+                cfg.SetNamingStrategy(new QuotedNamingStrategy());
+                props.LogSqlInConsole = true;
+
+            });
+        }
+
+        public static PocDbSwitcherRepository CreateForSqlServer(string connectionString)
+        {
+            return new PocDbSwitcherRepository(connectionString, (cfg, props) =>
+            {
+                props.Driver<SqlClientDriver>();
+                props.Dialect<MsSql2012Dialect>();
+            });
         }
     }
 
