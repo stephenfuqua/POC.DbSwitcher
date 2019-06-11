@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using DbUp.Builder;
 
 namespace POC.DbSwitcher.Console.Migrations
 {
@@ -23,26 +24,61 @@ namespace POC.DbSwitcher.Console.Migrations
                 Assembly.GetAssembly(typeof(POC.DbSwitcher.Database2.Marker))
             };
 
-            var upgradeEngineBuilder = _migrationStrategy
-                .DeployTo(DeployChanges.To, config)
-                .WithScriptsEmbeddedInAssemblies(assemblies, filter => IsStructureFolder(filter) || IsDataFolder(filter));
+            InstallStructure(assemblies);
+            InstallData(assemblies);
+            InstallExtras();
 
-            config.ExtraScriptPaths
-                .ToList()
-                .ForEach(x => upgradeEngineBuilder.WithScriptsFromFileSystem(x));
 
-            var result = upgradeEngineBuilder
-                .WithExecutionTimeout(TimeSpan.FromSeconds(config.Timeout))
-                .WithTransaction()
-                .LogToConsole()
-                .Build()
-                .PerformUpgrade();
-
-            if (!result.Successful)
+            void InstallStructure(Assembly[] assembliesContainingScripts)
             {
-                throw result.Error;
+                var upgradeEngineBuilder = _migrationStrategy
+                    .DeployTo(DeployChanges.To, config)
+                    .WithScriptsEmbeddedInAssemblies(assembliesContainingScripts, IsStructureFolder);
+
+                PerformUpgrade(upgradeEngineBuilder);
             }
 
+            void InstallData(Assembly[] assembliesContainingScripts)
+            {
+                var upgradeEngineBuilder = _migrationStrategy
+                    .DeployTo(DeployChanges.To, config)
+                    .WithScriptsEmbeddedInAssemblies(assembliesContainingScripts, IsDataFolder);
+
+                PerformUpgrade(upgradeEngineBuilder);
+            }
+
+            void InstallExtras()
+            {
+                if (!config.ExtraScriptPaths.Any())
+                {
+                    return;
+                }
+
+                // TODO: separate these scripts for structure and data directories
+                var upgradeEngineBuilder = _migrationStrategy
+                        .DeployTo(DeployChanges.To, config);
+
+                config.ExtraScriptPaths
+                    .ToList()
+                    .ForEach(x => upgradeEngineBuilder.WithScriptsFromFileSystem(x));
+
+                PerformUpgrade(upgradeEngineBuilder);
+            }
+
+            void PerformUpgrade(UpgradeEngineBuilder builder)
+            {
+                var result = builder
+                    .WithExecutionTimeout(TimeSpan.FromSeconds(config.Timeout))
+                    .WithTransaction()
+                    .LogToConsole()
+                    .Build()
+                    .PerformUpgrade();
+
+                if (!result.Successful)
+                {
+                    throw result.Error;
+                }
+            }
 
             bool IsStructureFolder(string filter)
             {
